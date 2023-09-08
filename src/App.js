@@ -1,25 +1,70 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import "pikaday/css/pikaday.css";
+import "./styles.css";
+import Handsontable from 'handsontable';
+import { HotTable, HotColumn } from "@handsontable/react";
+import { data } from "./constants";
+import { ProgressBarRenderer } from "./renderers/ProgressBar";
+import { StarsRenderer } from "./renderers/Stars";
+
+import {
+  drawCheckboxInRowHeaders,
+  addClassesToRows,
+  changeCheckboxCell,
+  alignHeaders
+} from "./hooksCallbacks";
+
+import "handsontable/dist/handsontable.min.css";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HotTable
+      data={data}
+      height={450}
+      colWidths={[140, 192, 100, 90, 90, 110, 97, 100, 126]}
+      colHeaders={[
+        "Company name",
+        "Name",
+        "Sell date",
+        "In stock",
+        "Qty",
+        "Progress",
+        "Rating",
+        "Order ID",
+        "Country"
+      ]}
+      dropdownMenu={true}
+      hiddenColumns={{
+        indicators: true
+      }}
+      contextMenu={true}
+      multiColumnSorting={true}
+      filters={true}
+      rowHeaders={true}
+      afterGetColHeader={alignHeaders}
+      beforeRenderer={addClassesToRows}
+      afterGetRowHeader={drawCheckboxInRowHeaders}
+      afterOnCellMouseDown={changeCheckboxCell}
+      manualRowMove={true}
+      licenseKey="non-commercial-and-evaluation"
+    >
+      <HotColumn data={1} />
+      <HotColumn data={3} />
+      <HotColumn data={4} type="date" allowInvalid={false} />
+      <HotColumn data={6} type="checkbox" className="htCenter" />
+      <HotColumn data={7} type="numeric" />
+      <HotColumn data={8} readOnly={true} className="htMiddle">
+        {/* @ts-ignore Element inherits some props. It's hard to type it. */}
+        <ProgressBarRenderer hot-renderer />
+      </HotColumn>
+      <HotColumn data={9} readOnly={true} className="htCenter">
+        {/* @ts-ignore Element inherits some props. It's hard to type it. */}
+        <StarsRenderer hot-renderer />
+      </HotColumn>
+      <HotColumn data={5} />
+      <HotColumn data={2} />
+    </HotTable>
   );
 }
 
